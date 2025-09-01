@@ -9,6 +9,8 @@ function App() {
     return savedTodos ? JSON.parse(savedTodos) : []
   })
   const [inputValue, setInputValue] = useState('')
+  const [editValue, setEditValue] = useState('')
+  const [editingId, setEditingId] = useState(null)
   
 
 
@@ -17,6 +19,23 @@ function App() {
   }, [todos])
   const addTodo = () => {
     setTodos([...todos, {id: Date.now(), text: inputValue, completed: false}])
+  }
+
+  const startEditing = (id, text) => {
+    setEditingId(id)
+    setEditingValue(text)
+  }
+  const saveEdit = () => {
+    setTodos( todos.map( todo =>
+      todo.id === editingId ? {...todo, text:editValue} : todo
+    ))
+    setEditingId(null)
+    setEditValue('')
+  }
+
+  const cancelEdit = () => {
+    setEditingId(null)
+    setEditValue('')
   }
 
   const deleteTodo = (id) => {
@@ -35,7 +54,17 @@ function App() {
           <Input value={inputValue} onChange={(e) => setInputValue(e.target.value)}/>
           <Button text="Add" onClick={addTodo} type="primary"/>
         </div>
-          <List items={todos} onDelete={deleteTodo} onToggle={toggleTodo}/>
+          <List 
+          items={todos} 
+          onDelete={deleteTodo} 
+          onToggle={toggleTodo}
+          onEdit={startEditing}
+          editingId={editingId}
+          editValue={editValue}
+          setEditValue={setEditValue}
+          saveEdit={saveEdit}
+          cancelEdit={cancelEdit}
+          />
     </div>
       
     </>
